@@ -16,5 +16,17 @@ jobs:
         run: git clone https://github.com/armbian/build
       - name: prepare patches
         run: cp -a userpatches build/userpatches
+      # stolen from official arm repo
+      - name: patch docker build for non-interactive
+        run: sed -i "s/-it --rm/-i --rm/" build/userpatches/config-docker.conf
       - name: build image
         run: (cd build && ./compile.sh docker BOARD=khadas-vim3 BRANCH=current RELEASE=jammy BUILD_MINIMAL=yes BUILD_DESKTOP=no KERNEL_ONLY=no KERNEL_CONFIGURE=no COMPRESS_OUTPUTIMAGE=sha,gpg,img)
+      - name: "release"
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "build/output/images/*"
+          tag: "${{ env.VERSION }}"
+          omitBody: true
+          omitName: true
+          allowUpdates: true
+          token: ${{ secrets.GITHUB_TOKEN }}
