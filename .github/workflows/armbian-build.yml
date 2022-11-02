@@ -8,14 +8,26 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v3
+      - name: Checkout support scripts
+        uses: actions/checkout@v3.1.0
+        with:
+          repository: armbian/scripts
+          path: scripts
+          clean: false
+      - name: Checkout build
+        uses: actions/checkout@v3.1.0
+        with:
+          repository: armbian/build
+          path: build
+          clean: false
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
-      - name: checkout armbian build
-        run: git clone https://github.com/armbian/build
       - name: prepare patches
         run: cp -a userpatches build/userpatches
+      - name: prepare configs
+        run: cp scripts/configs/* build/userpatches/
       # stolen from official arm repo
       - name: patch docker build for non-interactive
         run: sed -i "s/-it --rm/-i --rm/" build/userpatches/config-docker.conf
