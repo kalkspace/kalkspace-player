@@ -34,11 +34,7 @@ jobs:
       - name: build image
         run: (cd build && ./compile.sh docker BOARD=khadas-vim3 BRANCH=current RELEASE=jammy BUILD_MINIMAL=yes BUILD_DESKTOP=no KERNEL_ONLY=no KERNEL_CONFIGURE=no COMPRESS_OUTPUTIMAGE=sha,gpg,img)
       - name: "release"
-        uses: ncipollo/release-action@v1
+        uses: actions/upload-artifact@v3
         with:
-          artifacts: "build/output/images/*"
-          tag: "${{ env.VERSION }}"
-          omitBody: true
-          omitName: true
-          allowUpdates: true
-          token: ${{ secrets.GITHUB_TOKEN }}
+          name: "images"
+          path: "build/output/images/*"
